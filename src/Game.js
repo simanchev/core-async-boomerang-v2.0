@@ -9,7 +9,7 @@ class Game {
     this.trackLength = trackLength;
     this.trackRoad = 1;
     this.hero = new Hero(0, trackLength, this.trackRoad);
-    this.enemy = new Enemy();
+    this.enemy = new Enemy(trackLength - 1, Math.floor(Math.random() * 3));
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
@@ -21,11 +21,14 @@ class Game {
       this.track[i] = new Array(this.trackLength).fill(' ');
     }
     this.track[this.hero.trackRoad][this.hero.position] = this.hero.skin;
+    this.track[this.enemy.trackRoad][this.enemy.position] = this.enemy.skin;
+
     this.trackBorder = new Array(this.trackLength).fill('-');
   }
 
   check() {
-    if (this.hero.position === this.enemy.position) {
+    if (this.hero.position === this.enemy.position && 
+      this.hero.trackRoad === this.enemy.trackRoad) {
       this.hero.die();
     }
   }
@@ -36,7 +39,12 @@ class Game {
       this.check();
       this.regenerateTrack();
       this.view.render(this.track, this.trackBorder);
-    }, 100);
+      this.enemy.moveLeft();
+    }, 45);
+
+    setInterval(() => {
+      this.track[this.enemy.trackRoad][this.enemy.position] = this.enemy.skin;
+    }, 1000);
   }
 }
 

@@ -1,23 +1,40 @@
-// Враг.
-let j = 0;
 class Enemy {
-
-  constructor(trackLength, i) {
+  constructor(trackLength, trackRoad) {
     this.generateSkin();
     this.position = trackLength;
-    this.track = i;
+    this.trackRoad = trackRoad;
   }
 
-
   generateSkin() {
-    const skins = ['Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
-    this.skin = skins[j];
-    j++;
+    const skins = [
+      'regExp',
+      'arrays',
+      'promises',
+      'objects',
+      'sequelize',
+      'migrations',
+      'seeds',
+      'joins',
+      'async/await',
+      'eventLoop',
+      'callback',
+      'classes',
+      'prototypes',
+      'recursion',
+      'debugging',
+      'refactoring',
+      'beekeeper',
+      'npm',
+      'fs',
+      'git',
+      'this',
+    ];
+
+    this.skin = `\x1b[1m < ${skins[Math.floor(Math.random() * skins.length)]} > \x1b[0m `;
   }
 
   moveLeft() {
-    if (this.position > -100) this.position -= 1;
-    else this.position - 1000;
+    this.position -= 1;
   }
 
   die() {
