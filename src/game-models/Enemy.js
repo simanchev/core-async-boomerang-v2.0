@@ -1,19 +1,23 @@
 // Враг.
-
+let j = 0;
 class Enemy {
-  constructor() {
+
+  constructor(trackLength, i) {
     this.generateSkin();
-    this.position = 2;
+    this.position = trackLength;
+    this.track = i;
   }
 
+
   generateSkin() {
-    const skins = ['👾', '💀', '👹', '👻', '👽', '👿', '💩', '🤡', '🤺', '🧛', '🧟', '🎃'];
-    this.skin = skins[Math.floor(Math.random() * skins.length)];
+    const skins = ['💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
+    this.skin = skins[j];
+    j++;
   }
 
   moveLeft() {
-    // Идём влево.
-    this.position -= 1;
+    if (this.position > -1) this.position -= 1;
+    else this.position - 1000;
   }
 
   die() {
