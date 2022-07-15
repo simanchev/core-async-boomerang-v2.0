@@ -8,17 +8,17 @@ const sequelize = new Sequelize('boomteam', 'boomteam', 'boom', {
 });
 
 async function startGame() {
-  const userName = await getName();
-  sequelize.query(
-    `
-    INSERT INTO results (user_name, user_result)
-    VALUES ('${userName}', 0);
-    `,
-  );
-  process.stdin.resume();
+  // const userName = await getName();
+  // sequelize.query(
+  //   `
+  //   INSERT INTO results (user_name, user_result)
+  //   VALUES ('${userName}', 0);
+  //   `,
+  // );
+  // process.stdin.resume();
 
   const game = new Game({
-    trackLength: 30,
+    trackLength: 80,
   });
   game.play();
 }

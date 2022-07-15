@@ -10,7 +10,7 @@ class Enemy {
 
 
   generateSkin() {
-    const skins = ['💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
+    const skins = ['Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
     this.skin = skins[j];
     j++;
   }
