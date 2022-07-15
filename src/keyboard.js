@@ -8,12 +8,12 @@ const keyboard = {
   space: (hero) => hero.attack(),
 };
 
-function getKeypress() {
+function getKeypress(hero) {
   keypress(process.stdin);
   process.stdin.on('keypress', (ch, key) => {
     if (key) {
       if (key.name in keyboard) {
-        keyboard[key.name]();
+        keyboard[key.name](hero);
       }
       if (key.ctrl && key.name === 'c') {
         process.exit();

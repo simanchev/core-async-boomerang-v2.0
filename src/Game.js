@@ -28,8 +28,20 @@ class Game {
     if (j > 20) this.track[this.enemy.track][this.enemy.position] = this.enemy.skin;
     if (j % 5 == 4 && this.enemy.position >= 0) this.enemy.moveLeft();
 
-    if (j > 50 && j % 5 == 4 && this.enemy2.position >= 0)
+    this.track[this.boomerang.track][this.boomerang.position] =
+    this.boomerang.skin;
 
+    if (this.hero.position == this.boomerang.position) {
+      vector = -vector;
+      this.boomerang.position = -100;
+    }
+
+    if (this.enemy.position == this.boomerang.position) {
+      vector = -vector;
+      this.enemy.position = -10;
+    }
+    if (vector == 1) this.boomerang.moveRight();
+    if (vector == -1) this.boomerang.moveLeft();
   }
 
   check() {
@@ -42,14 +54,20 @@ class Game {
   }
 
   play() {
-    getKeypress(this.hero, this.hero.position, this.enemy.position);
+    console.log(this.hero.moveLeft)
+    getKeypress(this.hero);
     setInterval(() => {
       j++;
       // Let's play!
       this.check();
       this.regenerateTrack();
       this.view.render(
-        this.track
+        this.track,
+        this.hero.position,
+        this.enemy.position,
+        this.boomerang.position,
+        vector,
+        j
       );
     }, 100);
   }
