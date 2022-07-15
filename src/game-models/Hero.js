@@ -10,18 +10,23 @@ class Hero {
   }
 
   moveLeft() {
-    // Идём влево.
-    this.position -= 1;
+    if (this.position > 0) this.position -= 1;
   }
 
   moveRight() {
-    // Идём вправо.
-    this.position += 1;
+    if (this.position < this.trackLength - 1) this.position += 1;
   }
 
-  attack() {
-    // Атакуем.
-    this.boomerang.fly();
+  attack(hero) {
+    this.boomerang.fly(hero);
+  }
+
+  moveUp() {
+    if (this.track > 0) this.track -= 1;
+  }
+
+  moveDown() {
+    if (this.track < 2) this.track += 1;
   }
 
   die() {

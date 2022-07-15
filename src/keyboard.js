@@ -5,7 +5,7 @@ const keyboard = {
   right: (hero) => hero.moveRight(),
   up: (hero) => hero.moveUp(),
   down: (hero) => hero.moveDown(),
-  space: (hero) => hero.attack(),
+  space: (hero) => hero.attack(hero),
 };
 
 function getKeypress(hero) {
