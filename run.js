@@ -1,12 +1,14 @@
 // Основной файл.
 // Запускает игру.
 const Game = require('./src/Game');
+const getName = require('./src/reg');
 
-// Инициализация игры с настройками.
-const game = new Game({
-  trackLength: 30,
-});
+async function startGame() {
+  await getName();
+  const game = new Game({
+    trackLength: 30,
+  });
+  game.play();
+}
 
-
-// Запуск игры.
-game.play();
+startGame();
