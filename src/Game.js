@@ -14,7 +14,8 @@ class Game {
     this.trackLength = trackLength;
     this.boomerang = new Boomerang(trackLength, 1);
     this.hero = new Hero(0, trackLength, this.boomerang, 1);
-    this.enemy = new Enemy(trackLength, 1);
+    this.enemy2 = new Enemy(trackLength, 0);
+    this.enemy = new Enemy(trackLength, 2);
     this.view = new View();
     this.track = [];
     this.regenerateTrack();
@@ -27,6 +28,10 @@ class Game {
 
     if (j > 20) this.track[this.enemy.track][this.enemy.position] = this.enemy.skin;
     if (j % 5 == 4 && this.enemy.position >= 0) this.enemy.moveLeft();
+
+    if (j === 50) this.enemy2.position = this.trackLength;
+    if (j > 50) this.track[this.enemy2.track][this.enemy2.position] = this.enemy2.skin;
+    if (j % 5 == 4 && this.enemy2.position >= 0) this.enemy2.moveLeft();
 
     this.track[this.boomerang.track][this.boomerang.position] =
     this.boomerang.skin;
