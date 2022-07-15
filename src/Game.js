@@ -4,9 +4,9 @@ const Boomerang = require("./game-models/Boomerang");
 const View = require("./View");
 const getKeypress = require("./keyboard");
 
-let x = 1;
-let j = 1;
-let vector = 1;
+let x = 0;
+let acc = 1;
+let boomerangDirection = 1;
 let i = 1;
 
 class Game {
@@ -14,8 +14,7 @@ class Game {
     this.trackLength = trackLength;
     this.boomerang = new Boomerang(trackLength, 1);
     this.hero = new Hero(0, trackLength, this.boomerang, 1);
-    this.enemy2 = new Enemy(trackLength, 0);
-    this.enemy = new Enemy(trackLength, 2);
+    this.enemy = [];
     this.view = new View();
     this.track = [];
     this.regenerateTrack();
@@ -24,29 +23,35 @@ class Game {
   regenerateTrack() {
     for (let z = 0; z < 3; z++)
       this.track[z] = new Array(this.trackLength).fill("  ");
+
     this.track[this.hero.track][this.hero.position] = this.hero.skin;
 
-    if (j > 20) this.track[this.enemy.track][this.enemy.position] = this.enemy.skin;
-    if (j % 5 == 4 && this.enemy.position >= 0) this.enemy.moveLeft();
+    if (acc % 10 === 5) {
+      this.enemy.push(new Enemy(this.trackLength, x % 3));
+      this.track[this.enemy[x].track][this.enemy[x].position] = this.enemy[x].skin;
+      x++;
+    }
 
-    if (j === 50) this.enemy2.position = this.trackLength;
-    if (j > 50) this.track[this.enemy2.track][this.enemy2.position] = this.enemy2.skin;
-    if (j % 5 == 4 && this.enemy2.position >= 0) this.enemy2.moveLeft();
+    this.enemy.forEach((el) => (this.track[el.track][el.position] = el.skin));
+    this.enemy.forEach((el) => el.moveLeft());
 
-    this.track[this.boomerang.track][this.boomerang.position] =
-    this.boomerang.skin;
-
+    this.track[this.boomerang.track][this.boomerang.position] = this.boomerang.skin;
+    
     if (this.hero.position == this.boomerang.position) {
-      vector = -vector;
+      boomerangDirection = -boomerangDirection;
       this.boomerang.position = -100;
     }
 
-    if (this.enemy.position == this.boomerang.position) {
-      vector = -vector;
-      this.enemy.position = -10;
-    }
-    if (vector == 1) this.boomerang.moveRight();
-    if (vector == -1) this.boomerang.moveLeft();
+    this.enemy.forEach((el) => {
+      if (el.position == this.boomerang.position) {
+        boomerangDirection = -boomerangDirection;
+        el.position = -100;
+      }
+    })
+
+
+    if (boomerangDirection == 1) this.boomerang.moveRight();
+    if (boomerangDirection == -1) this.boomerang.moveLeft();
   }
 
   check() {
@@ -59,10 +64,9 @@ class Game {
   }
 
   play() {
-    console.log(this.hero.moveLeft)
     getKeypress(this.hero);
     setInterval(() => {
-      j++;
+      acc++;
       // Let's play!
       this.check();
       this.regenerateTrack();
@@ -71,12 +75,11 @@ class Game {
         this.hero.position,
         this.enemy.position,
         this.boomerang.position,
-        vector,
-        j
+        boomerangDirection,
+        acc
       );
     }, 100);
   }
 }
 
 module.exports = Game;
-

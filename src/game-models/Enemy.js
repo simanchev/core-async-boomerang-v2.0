@@ -10,13 +10,13 @@ class Enemy {
 
 
   generateSkin() {
-    const skins = ['💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
+    const skins = ['💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
     this.skin = skins[j];
     j++;
   }
 
   moveLeft() {
-    if (this.position > -1) this.position -= 1;
+    if (this.position > -100) this.position -= 1;
     else this.position - 1000;
   }
 
