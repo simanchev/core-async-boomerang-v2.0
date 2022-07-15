@@ -8,8 +8,8 @@ function getName() {
     });
 
     rl.question((`\nВЕЛКОМЕ! 🖐\n\nПиши имя, студент:\n\n`), (name) => {
-      resolve(name);
       rl.close();
+      resolve(name);
     });
   });
 }
