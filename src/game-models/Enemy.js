@@ -1,28 +1,20 @@
-// Враг.
-let j = 0;
 class Enemy {
-
-  constructor(trackLength, i) {
-    this.generateSkin();
+  constructor(trackLength, trackRoad, word) {
+    this.generateSkin(word);
     this.position = trackLength;
-    this.track = i;
+    this.trackRoad = trackRoad;
   }
 
-
-  generateSkin() {
-    const skins = ['💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀','💀Regex💀','💀ArrayMethods💀','💀Class💀','💀Promise💀','💀SQL💀'];
-    this.skin = skins[j];
-    j++;
+  generateSkin(word) {
+    this.skin = word[Math.floor(Math.random() * word.length)];
   }
 
   moveLeft() {
-    if (this.position > -100) this.position -= 1;
-    else this.position - 1000;
+    this.position -= 1;
   }
 
   die() {
-    this.position = '?';
-    console.log('Enemy is dead!');
+    this.position = -1;
   }
 }
 

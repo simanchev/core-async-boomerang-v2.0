@@ -1,10 +1,10 @@
 const keypress = require('keypress');
 
 const keyboard = {
-  left: (hero) => hero.moveLeft(),
-  right: (hero) => hero.moveRight(),
-  up: (hero) => hero.moveUp(),
-  down: (hero) => hero.moveDown(),
+  left: (hero, trackLength) => hero.moveLeft(trackLength),
+  right: (hero, trackLength) => hero.moveRight(trackLength),
+  up: (hero, enemy) => hero.moveUp(enemy),
+  down: (hero, enemy) => hero.moveDown(enemy),
   space: (hero) => hero.attack(hero),
 };
 

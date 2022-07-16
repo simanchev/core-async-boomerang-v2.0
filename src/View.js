@@ -1,16 +1,36 @@
 // Сделаем отдельный класс для отображения игры в консоли.
 
 class View {
-  render(track) {
-    const yourTeamName = 'Elbrus';
+  render(track, trackBorder, word, coloredLetters, round) {
+    this.track = track;
+    this.trackBorder = trackBorder;
+    this.word = word;
+    this.coloredLetters = coloredLetters;
+    this.round = round;
+    this.displayWord = '';
 
-    // Тут всё рисуем.
     console.clear();
-    for (let z = 0; z < 3; z++) {
-    console.log(track[z].join(""));
+    word.forEach((letter, index) => {
+      if (this.coloredLetters.includes(index)) {
+        this.displayWord += `${letter[1]} `;
+      } else {
+        this.displayWord += `${letter[0]} `;
+      }
+    });
+
+    console.log('\n');
+    console.log(`Тема занятия (${this.round = round} из 9): ${this.displayWord}`)
+    console.log('\n');
+    console.log(this.trackBorder.join(''));
+    console.log('\n');
+
+    for (let i = 0; i < 3; i++) {
+      console.log(this.track[i].join(''));
+      console.log('\n');
     }
-    console.log('\n\n');
-    console.log(`Created by "${yourTeamName}" with love`);
+
+    console.log(this.trackBorder.join(''));
+    console.log('\n');
   }
 }
 
