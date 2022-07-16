@@ -16,7 +16,7 @@ class Game {
     this.trackBorder = [];
     this.words = [
       ['🅽', '🅿', '🅼'],
-      '🅵🆂',
+      ['🅵', '🆂'],
       '🅰🆁🆁🅰🆈',
       '🆁🅴🅲🆄🆁🆂🅸🅾🅽',
       '🆁🅴🅶🅴🆇🅿',
@@ -31,6 +31,7 @@ class Game {
       '🅹🅾🅸🅽',
       '🆂🅴🆀🆄🅴🅻🅸🆉🅴',
     ];
+    this.colors = ['\x1b[31m', '\x1b[32m', '\x1b[34m', '\x1b[35m', '\x1b[36m'];
     this.regenerateTrack();
   }
 
@@ -47,18 +48,40 @@ class Game {
 
     if (this.brain.flyStatus) {
       this.track[this.brain.trackRoad][this.brain.position] = this.brain.skin;
-      this.brain.move(this.hero.trackRoad, this.hero.position);
+      this.brain.move(this.hero.trackRoad, this.hero.position, this.enemy);
     }
 
     this.trackBorder = new Array(this.trackLength).fill('-');
   }
 
   check() {
-    if (this.hero.position === this.enemy.position && 
-      this.hero.trackRoad === this.enemy.trackRoad) {
-      this.hero.die();
-    }
+    this.enemy.forEach((enemy) => {
+      if (this.hero.position === enemy.position && 
+        this.hero.trackRoad === enemy.trackRoad) {
+        this.hero.die(this.enemy);
+      }
+      if ((this.brain.position === enemy.position || this.brain.position - enemy.position === 1) && 
+        this.brain.trackRoad === enemy.trackRoad) {
+        this.brain.flyStatus = false;
+        this.brain.position = -1;
+
+        this.words[0].forEach((letter, index) => {
+          if (enemy.skin === letter) {
+            this.words[0][index] = `${this.colors[Math.floor(Math.random() * this.colors.length)]}${letter}\x1b[0m`;
+          }
+        });
+
+        enemy.die();
+
+      }
+    });
   }
+
+  updateWords() {
+    this.words[0]
+  }
+
+
 
   play() {
     getKeypress(this.hero, this.enemy);
@@ -75,106 +98,3 @@ class Game {
 }
 
 module.exports = Game;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const Hero = require("./game-models/Hero");
-// const Enemy = require("./game-models/Enemy");
-// const Boomerang = require("./game-models/Boomerang");
-// const View = require("./View");
-// const getKeypress = require("./keyboard");
-
-// let x = 0;
-// let acc = 1;
-// let boomerangDirection = 1;
-// let i = 1;
-
-// class Game {
-//   constructor({ trackLength }) {
-//     this.trackLength = trackLength;
-//     this.boomerang = new Boomerang(trackLength, 1);
-//     this.hero = new Hero(0, trackLength, this.boomerang, 1);
-//     this.enemy = [];
-//     this.view = new View();
-//     this.track = [];
-//     this.regenerateTrack();
-//   }
-
-//   regenerateTrack() {
-//     for (let z = 0; z < 3; z++)
-//       this.track[z] = new Array(this.trackLength).fill("  ");
-
-//     this.track[this.hero.track][this.hero.position] = this.hero.skin;
-
-//     if (acc % 10 === 5) {
-//       this.enemy.push(new Enemy(this.trackLength, x % 3));
-//       this.track[this.enemy[x].track][this.enemy[x].position] = this.enemy[x].skin;
-//       x++;
-//     }
-
-//     this.enemy.forEach((el) => (this.track[el.track][el.position] = el.skin));
-//     this.enemy.forEach((el) => el.moveLeft());
-
-//     this.track[this.boomerang.track][this.boomerang.position] = this.boomerang.skin;
-    
-//     if (this.hero.position == this.boomerang.position) {
-//       boomerangDirection = -boomerangDirection;
-//       this.boomerang.position = -100;
-//     }
-
-//     this.enemy.forEach((el) => {
-//       if (el.position == this.boomerang.position) {
-//         boomerangDirection = -boomerangDirection;
-//         el.position = -100;
-//       }
-//     })
-
-
-//     if (boomerangDirection == 1) this.boomerang.moveRight();
-//     if (boomerangDirection == -1) this.boomerang.moveLeft();
-//   }
-
-//   check() {
-//     if (
-//       this.hero.position === this.enemy.position &&
-//       this.hero.track === this.enemy.track
-//     ) {
-//       this.hero.die();
-//     }
-//   }
-
-//   play() {
-//     getKeypress(this.hero);
-//     setInterval(() => {
-//       acc++;
-//       // Let's play!
-//       this.check();
-//       this.regenerateTrack();
-//       this.view.render(
-//         this.track,
-//         this.hero.position,
-//         this.enemy.position,
-//         this.boomerang.position,
-//         boomerangDirection,
-//         acc
-//       );
-//     }, 100);
-//   }
-// }
-
-// module.exports = Game;

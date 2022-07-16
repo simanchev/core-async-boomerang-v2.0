@@ -29,19 +29,6 @@ class Brain {
     }
 
     if (!this.position) this.flyStatus = false;
-
-  }
-
-  moveLeft() {
-    // if (this.position >= 0 && this.position <= this.trackLength)
-    //   this.position -= 1;
-    // else this.position = -1000;
-  }
-
-  moveRight() {
-    // if (this.position >= 0 && this.position <= this.trackLength)
-    //   this.position += 1;
-    // else this.position = -1000;
   }
 }
 
