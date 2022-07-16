@@ -1,9 +1,12 @@
 // Сделаем отдельный класс для отображения игры в консоли.
 
 class View {
-  render(track, trackBorder) {
+  render(track, trackBorder, words) {
 
     console.clear();
+    console.log('\n');
+    console.log(`Тема занятий: ${words[0].join(' ')}`)
+    console.log('\n');
     console.log(trackBorder.join(''));
     console.log('\n');
 

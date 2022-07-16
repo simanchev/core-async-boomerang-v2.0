@@ -1,6 +1,6 @@
 const Hero = require('./game-models/Hero');
 const Enemy = require('./game-models/Enemy');
-const Boomerang = require('./game-models/Boomerang');
+const Brain = require('./game-models/Brain');
 const View = require('./View');
 const getKeypress = require('./keyboard');
 
@@ -8,11 +8,29 @@ class Game {
   constructor({ trackLength }) {
     this.trackLength = trackLength;
     this.trackRoad = 1;
-    this.hero = new Hero(0, trackLength, this.trackRoad);
-    this.enemy = [new Enemy(this.trackLength - 1, Math.floor(Math.random() * 3))];
+    this.brain = new Brain(0, trackLength, this.trackRoad);
+    this.hero = new Hero(0, trackLength, this.trackRoad, this.brain);
+    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3))];
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
+    this.words = [
+      ['🅽', '🅿', '🅼'],
+      '🅵🆂',
+      '🅰🆁🆁🅰🆈',
+      '🆁🅴🅲🆄🆁🆂🅸🅾🅽',
+      '🆁🅴🅶🅴🆇🅿',
+      '🅾🅱🅹🅴🅲🆃',
+      '🆃🅷🅸🆂',
+      '🅲🅻🅰🆂🆂',
+      '🅲🅰🅻🅻🅱🅰🅲🅺',
+      '🅿🆁🅾🅼🅸🆂🅴',
+      '🅰🆂🆈🅽🅲',
+      '🅰🆆🅰🅸🆃',
+      '🆂🆀🅻',
+      '🅹🅾🅸🅽',
+      '🆂🅴🆀🆄🅴🅻🅸🆉🅴',
+    ];
     this.regenerateTrack();
   }
 
@@ -20,11 +38,17 @@ class Game {
     for (let i = 0; i < 3; i++) {
       this.track[i] = new Array(this.trackLength).fill(' ');
     }
+
     this.track[this.hero.trackRoad][this.hero.position] = this.hero.skin;
     this.enemy.forEach((enemy) => {
       this.track[enemy.trackRoad][enemy.position] = enemy.skin;
       enemy.moveLeft();
     });
+
+    if (this.brain.flyStatus) {
+      this.track[this.brain.trackRoad][this.brain.position] = this.brain.skin;
+      this.brain.move(this.hero.trackRoad, this.hero.position);
+    }
 
     this.trackBorder = new Array(this.trackLength).fill('-');
   }
@@ -41,12 +65,12 @@ class Game {
     setInterval(() => {
       this.check();
       this.regenerateTrack();
-      this.view.render(this.track, this.trackBorder);
+      this.view.render(this.track, this.trackBorder, this.words);
     }, 100);
 
     setInterval(() => {
-      this.enemy.push(new Enemy(this.trackLength - 1, Math.floor(Math.random() * 3)));
-    }, 2000);
+      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3)));
+    }, 1500);
   }
 }
 

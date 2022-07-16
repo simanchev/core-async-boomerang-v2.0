@@ -1,9 +1,10 @@
 class Hero {
-  constructor(position, trackLength, trackRoad) {
+  constructor(position, trackLength, trackRoad, weapon) {
     this.skin = '🤯';
     this.position = position;
     this.trackLength = trackLength;
     this.trackRoad = trackRoad;
+    this.weapon = weapon;
   }
 
   moveLeft() {
@@ -14,8 +15,8 @@ class Hero {
     if (this.position < this.trackLength - 1) this.position += 1;
   }
 
-  attack(hero) {
-    this.boomerang.fly(hero);
+  attack() {
+    this.weapon.fly(this.trackRoad, this.position);
   }
 
   moveUp() {

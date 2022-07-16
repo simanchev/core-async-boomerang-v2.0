@@ -18,7 +18,7 @@ async function startGame() {
   // process.stdin.resume();
 
   const game = new Game({
-    trackLength: 80,
+    trackLength: 50,
   });
   game.play();
 }
