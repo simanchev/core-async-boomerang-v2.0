@@ -1,6 +1,6 @@
 class Hero {
   constructor(position, trackLength, trackRoad) {
-    this.skin = '👨‍💻';
+    this.skin = '🤯';
     this.position = position;
     this.trackLength = trackLength;
     this.trackRoad = trackRoad;

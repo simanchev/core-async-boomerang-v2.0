@@ -1,6 +1,6 @@
 const Hero = require('./game-models/Hero');
 const Enemy = require('./game-models/Enemy');
-// const Boomerang = require('./game-models/Boomerang');
+const Boomerang = require('./game-models/Boomerang');
 const View = require('./View');
 const getKeypress = require('./keyboard');
 
@@ -9,7 +9,7 @@ class Game {
     this.trackLength = trackLength;
     this.trackRoad = 1;
     this.hero = new Hero(0, trackLength, this.trackRoad);
-    this.enemy = new Enemy(trackLength - 1, Math.floor(Math.random() * 3));
+    this.enemy = [new Enemy(this.trackLength - 1, Math.floor(Math.random() * 3))];
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
@@ -21,7 +21,10 @@ class Game {
       this.track[i] = new Array(this.trackLength).fill(' ');
     }
     this.track[this.hero.trackRoad][this.hero.position] = this.hero.skin;
-    this.track[this.enemy.trackRoad][this.enemy.position] = this.enemy.skin;
+    this.enemy.forEach((enemy) => {
+      this.track[enemy.trackRoad][enemy.position] = enemy.skin;
+      enemy.moveLeft();
+    });
 
     this.trackBorder = new Array(this.trackLength).fill('-');
   }
@@ -34,17 +37,16 @@ class Game {
   }
 
   play() {
-    getKeypress(this.hero);
+    getKeypress(this.hero, this.enemy);
     setInterval(() => {
       this.check();
       this.regenerateTrack();
       this.view.render(this.track, this.trackBorder);
-      this.enemy.moveLeft();
-    }, 45);
+    }, 100);
 
     setInterval(() => {
-      this.track[this.enemy.trackRoad][this.enemy.position] = this.enemy.skin;
-    }, 1000);
+      this.enemy.push(new Enemy(this.trackLength - 1, Math.floor(Math.random() * 3)));
+    }, 2000);
   }
 }
 

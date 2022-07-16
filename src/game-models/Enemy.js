@@ -7,30 +7,38 @@ class Enemy {
 
   generateSkin() {
     const skins = [
-      'regExp',
-      'arrays',
-      'promises',
-      'objects',
-      'sequelize',
-      'migrations',
-      'seeds',
-      'joins',
-      'async/await',
-      'eventLoop',
-      'callback',
-      'classes',
-      'prototypes',
-      'recursion',
-      'debugging',
-      'refactoring',
-      'beekeeper',
-      'npm',
-      'fs',
-      'git',
-      'this',
+      'r',
+      'e',
+      'o',
+      's',
+      'a',
+      'w',
+      // 'regExp',
+      // 'arrays',
+      // 'promises',
+      // 'objects',
+      // 'sequelize',
+      // 'migrations',
+      // 'seeds',
+      // 'joins',
+      // 'async/await',
+      // 'eventLoop',
+      // 'callback',
+      // 'classes',
+      // 'prototypes',
+      // 'recursion',
+      // 'debugging',
+      // 'refactoring',
+      // 'beekeeper',
+      // 'npm',
+      // 'fs',
+      // 'git',
+      // 'this',
     ];
+    const colors = ['\x1b[41m', '\x1b[42m', '\x1b[43m', '\x1b[44m', '\x1b[45m', '\x1b[46m']
 
-    this.skin = `\x1b[1m < ${skins[Math.floor(Math.random() * skins.length)]} > \x1b[0m `;
+    this.skin = `${colors[Math.floor(Math.random() * colors.length)]} ${skins[Math.floor(Math.random() * skins.length)]} \x1b[0m `;
+    
   }
 
   moveLeft() {

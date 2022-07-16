@@ -3,12 +3,12 @@ const keypress = require('keypress');
 const keyboard = {
   left: (hero, trackLength) => hero.moveLeft(trackLength),
   right: (hero, trackLength) => hero.moveRight(trackLength),
-  up: (hero) => hero.moveUp(),
-  down: (hero) => hero.moveDown(),
-  // space: (hero) => hero.attack(hero),
+  up: (hero, enemy) => hero.moveUp(enemy),
+  down: (hero, enemy) => hero.moveDown(enemy),
+  space: (hero) => hero.attack(hero),
 };
 
-function getKeypress(hero, trackLength) {
+function getKeypress(hero) {
   keypress(process.stdin);
   process.stdin.on('keypress', (ch, key) => {
     if (key) {
