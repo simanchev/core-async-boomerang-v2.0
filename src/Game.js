@@ -5,7 +5,8 @@ const View = require('./View');
 const getKeypress = require('./keyboard');
 
 class Game {
-  constructor({ trackLength }) {
+  constructor(trackLength, userName) {
+    this.userName = userName;
     this.trackLength = trackLength;
     this.trackRoad = 1;
     this.words = [
@@ -61,7 +62,7 @@ class Game {
     this.enemy.forEach((enemy) => {
       if (this.hero.position === enemy.position && 
         this.hero.trackRoad === enemy.trackRoad) {
-        this.hero.die(this.enemy);
+        this.hero.die(this.enemy, this.userName, this.round);
       }
 
       if ((this.brain.position === enemy.position || 
@@ -105,14 +106,12 @@ class Game {
           }
 
           else {
-            this.hero.die(this.enemy);
+            this.hero.die(this.enemy, this.userName, this.round);
           }
         } else {
-          this.hero.die(this.enemy);
+          this.hero.die(this.enemy, this.userName, this.round);
         }
 
-        // this.brain.flyStatus = false;
-        // this.brain.position = -1;
         enemy.die();
         this.brain.flyDirection = -1;
       }
