@@ -1,20 +1,12 @@
 class Enemy {
-  constructor(trackLength, trackRoad) {
-    this.generateSkin();
+  constructor(trackLength, trackRoad, word) {
+    this.generateSkin(word);
     this.position = trackLength;
     this.trackRoad = trackRoad;
   }
 
-  generateSkin() {
-    const skins = [
-      '🅰', '🅱', '🅲', '🅴', '🅵',
-      '🅶', '🅷', '🅸', '🅹', '🅺',
-      '🅻', '🅼', '🅽', '🅾', '🅿',
-      '🆀', '🆁', '🆂', '🆃', '🆄',
-      '🆆', '🆇', '🆈', '🆉',
-    ];
-    this.skin = skins[Math.floor(Math.random() * skins.length)];
-    // this.skin = `${colors[Math.floor(Math.random() * colors.length)]}${skins[Math.floor(Math.random() * skins.length)]}\x1b[0m`;
+  generateSkin(word) {
+    this.skin = word[Math.floor(Math.random() * word.length)];
   }
 
   moveLeft() {

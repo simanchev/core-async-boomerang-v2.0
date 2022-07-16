@@ -8,30 +8,35 @@ class Game {
   constructor({ trackLength }) {
     this.trackLength = trackLength;
     this.trackRoad = 1;
+    this.words = [
+      ['🅵', '🆂'],
+      ['🆂', '🆀', '🅻'],
+      ['🅹', '🅾', '🅸', '🅽'],
+      ['🅲', '🅻', '🅰', '🆂', '🆂'],
+      ['🆁', '🅴', '🅶', '🅴', '🆇', '🅿'],
+      ['🅿', '🆁', '🅾', '🅼', '🅸', '🆂', '🅴'],
+      ['🅲', '🅰', '🅻', '🅻', '🅱', '🅰', '🅲', '🅺'],
+      ['🆁', '🅴', '🅲', '🆄', '🆁', '🆂', '🅸', '🅾', '🅽'],
+      ['🅰', '🆂', '🆈', '🅽', '🅲', '🅷', '🆁', '🅾', '🅽', '🆈'],
+    ];
+    this.round = 1;
+    this.targetWord = this.words[this.round - 1];
+    this.displayedWord = []
+    this.colors = ['\x1b[31m', '\x1b[32m', '\x1b[34m', '\x1b[35m', '\x1b[36m'];
+    this.targetWord.forEach((letter) => {
+      const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+      this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
+    });
+    this.letterIndex = null;
+    this.coloredLetters = [];
     this.brain = new Brain(0, trackLength, this.trackRoad);
     this.hero = new Hero(0, trackLength, this.trackRoad, this.brain);
-    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3))];
+    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord)];
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
-    this.words = [
-      ['🅽', '🅿', '🅼'],
-      ['🅵', '🆂'],
-      '🅰🆁🆁🅰🆈',
-      '🆁🅴🅲🆄🆁🆂🅸🅾🅽',
-      '🆁🅴🅶🅴🆇🅿',
-      '🅾🅱🅹🅴🅲🆃',
-      '🆃🅷🅸🆂',
-      '🅲🅻🅰🆂🆂',
-      '🅲🅰🅻🅻🅱🅰🅲🅺',
-      '🅿🆁🅾🅼🅸🆂🅴',
-      '🅰🆂🆈🅽🅲',
-      '🅰🆆🅰🅸🆃',
-      '🆂🆀🅻',
-      '🅹🅾🅸🅽',
-      '🆂🅴🆀🆄🅴🅻🅸🆉🅴',
-    ];
-    this.colors = ['\x1b[31m', '\x1b[32m', '\x1b[34m', '\x1b[35m', '\x1b[36m'];
+    this.winsCounter = 0;
+    this.letterCounter = 0;
     this.regenerateTrack();
   }
 
@@ -60,40 +65,54 @@ class Game {
         this.hero.trackRoad === enemy.trackRoad) {
         this.hero.die(this.enemy);
       }
-      if ((this.brain.position === enemy.position || this.brain.position - enemy.position === 1) && 
-        this.brain.trackRoad === enemy.trackRoad) {
+
+      if ((this.brain.position === enemy.position || 
+        this.brain.position - enemy.position === 1) && 
+        this.brain.trackRoad === enemy.trackRoad &&
+        this.brain.flyStatus === true) {
+        if (this.targetWord.includes(enemy.skin)) {
+          this.letterIndex = this.targetWord.indexOf(enemy.skin);
+          if (!this.coloredLetters.includes(this.letterIndex)) {
+            this.coloredLetters.push(this.letterIndex);
+            this.letterCounter++;
+
+            if (this.letterCounter === this.targetWord.length) {
+              this.round++;
+              this.displayedWord = [];
+              this.coloredLetters = [];
+              this.letterCounter = 0;
+              this.targetWord = this.words[this.round - 1];
+              
+              this.targetWord.forEach((letter) => {
+                const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
+              });
+            }
+          } else {
+            this.hero.die(this.enemy);
+          }
+        } else {
+          this.hero.die(this.enemy);
+        }
+
         this.brain.flyStatus = false;
         this.brain.position = -1;
-
-        this.words[0].forEach((letter, index) => {
-          if (enemy.skin === letter) {
-            this.words[0][index] = `${this.colors[Math.floor(Math.random() * this.colors.length)]}${letter}\x1b[0m`;
-          }
-        });
-
         enemy.die();
-
       }
     });
   }
-
-  updateWords() {
-    this.words[0]
-  }
-
-
 
   play() {
     getKeypress(this.hero, this.enemy);
     setInterval(() => {
       this.check();
       this.regenerateTrack();
-      this.view.render(this.track, this.trackBorder, this.words);
-    }, 100);
+      this.view.render(this.track, this.trackBorder, this.displayedWord, this.coloredLetters, this.round);
+    }, 80);
 
     setInterval(() => {
-      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3)));
-    }, 1500);
+      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord));
+    }, 700);
   }
 }
 
