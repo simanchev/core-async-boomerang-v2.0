@@ -9,7 +9,7 @@ const sequelize = new Sequelize('boomteam', 'boomteam', 'boom', {
 
 async function startGame() {
   console.clear();
-  const userName = await getName();
+  // const userName = await getName();
   // sequelize.query(
   //   `
   //   INSERT INTO results (user_name, user_result)

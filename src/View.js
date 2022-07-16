@@ -19,7 +19,7 @@ class View {
     });
 
     console.log('\n');
-    console.log(`Тема занятий (${this.round = round} из 9): ${this.displayWord}`)
+    console.log(`Тема занятия (${this.round = round} из 9): ${this.displayWord}`)
     console.log('\n');
     console.log(this.trackBorder.join(''));
     console.log('\n');

@@ -35,8 +35,6 @@ class Game {
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
-    this.winsCounter = 0;
-    this.letterCounter = 0;
     this.regenerateTrack();
   }
 
@@ -72,32 +70,51 @@ class Game {
         this.brain.flyStatus === true) {
         if (this.targetWord.includes(enemy.skin)) {
           this.letterIndex = this.targetWord.indexOf(enemy.skin);
+          const secondLetterIndex = this.targetWord.indexOf(enemy.skin, this.letterIndex + 1);
+
           if (!this.coloredLetters.includes(this.letterIndex)) {
             this.coloredLetters.push(this.letterIndex);
-            this.letterCounter++;
 
-            if (this.letterCounter === this.targetWord.length) {
+            if (this.coloredLetters.length === this.targetWord.length) {
               this.round++;
               this.displayedWord = [];
               this.coloredLetters = [];
               this.letterCounter = 0;
               this.targetWord = this.words[this.round - 1];
-              
+
               this.targetWord.forEach((letter) => {
                 const color = this.colors[Math.floor(Math.random() * this.colors.length)];
                 this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
               });
             }
-          } else {
+          } else if (!this.coloredLetters.includes(secondLetterIndex)) {
+            this.coloredLetters.push(secondLetterIndex);
+
+            if (this.coloredLetters.length === this.targetWord.length) {
+              this.round++;
+              this.displayedWord = [];
+              this.coloredLetters = [];
+              this.letterCounter = 0;
+              this.targetWord = this.words[this.round - 1];
+
+              this.targetWord.forEach((letter) => {
+                const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
+              });
+            }
+          }
+
+          else {
             this.hero.die(this.enemy);
           }
         } else {
           this.hero.die(this.enemy);
         }
 
-        this.brain.flyStatus = false;
-        this.brain.position = -1;
+        // this.brain.flyStatus = false;
+        // this.brain.position = -1;
         enemy.die();
+        this.brain.flyDirection = -1;
       }
     });
   }
@@ -108,11 +125,11 @@ class Game {
       this.check();
       this.regenerateTrack();
       this.view.render(this.track, this.trackBorder, this.displayedWord, this.coloredLetters, this.round);
-    }, 80);
+    }, 100);
 
     setInterval(() => {
       this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord));
-    }, 700);
+    }, 600);
   }
 }
 
