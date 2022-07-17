@@ -6,12 +6,14 @@ const sequelize = new Sequelize('boomteam', 'boomteam', 'boom', {
 });
 
 class Hero {
-  constructor(position, trackLength, trackRoad, weapon) {
+  constructor(position, trackLength, trackRoad, weapon, sound, player) {
     this.skin = '🤯';
     this.position = position;
     this.trackLength = trackLength;
     this.trackRoad = trackRoad;
     this.weapon = weapon;
+    this.sound = sound;
+    this.player = player;
   }
 
   moveLeft() {
@@ -34,13 +36,17 @@ class Hero {
     if (this.trackRoad < 2) this.trackRoad += 1;
   }
 
-  die(enemies, userName, round) {
+  die(enemies, userName, round, sound) {
     enemies.forEach((enemy) => {
       enemy.die();
     });
     this.weapon.flyStatus = false;
 
     this.skin = '😭';
+
+    sound.kill();
+    this.player.play('./src/sounds/gameover.wav');
+
 
     async function writeResults() {
       await sequelize.query(

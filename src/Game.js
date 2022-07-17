@@ -3,6 +3,7 @@ const Enemy = require('./game-models/Enemy');
 const Brain = require('./game-models/Brain');
 const View = require('./View');
 const getKeypress = require('./keyboard');
+const player = require('play-sound')(opts = {});
 
 class Game {
   constructor(trackLength, userName) {
@@ -30,12 +31,14 @@ class Game {
     });
     this.letterIndex = null;
     this.coloredLetters = [];
-    this.brain = new Brain(0, trackLength, this.trackRoad);
-    this.hero = new Hero(0, trackLength, this.trackRoad, this.brain);
-    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord)];
+    this.brain = new Brain(0, trackLength, this.trackRoad, player);
+    this.hero = new Hero(0, trackLength, this.trackRoad, this.brain, this.sound, player);
+    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord, player)];
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
+    this.sound = player.play('./src/sounds/gamesound2.wav');
+    this.player = player;
     this.regenerateTrack();
   }
 
@@ -62,7 +65,7 @@ class Game {
     this.enemy.forEach((enemy) => {
       if (this.hero.position === enemy.position && 
         this.hero.trackRoad === enemy.trackRoad) {
-        this.hero.die(this.enemy, this.userName, this.round);
+        this.hero.die(this.enemy, this.userName, this.round, this.sound);
       }
 
       if ((this.brain.position === enemy.position || 
@@ -106,10 +109,10 @@ class Game {
           }
 
           else {
-            this.hero.die(this.enemy, this.userName, this.round);
+            this.hero.die(this.enemy, this.userName, this.round, this.sound);
           }
         } else {
-          this.hero.die(this.enemy, this.userName, this.round);
+          this.hero.die(this.enemy, this.userName, this.round, this.sound);
         }
 
         enemy.die();
@@ -119,16 +122,19 @@ class Game {
   }
 
   play() {
+    this.sound;
     getKeypress(this.hero, this.enemy);
     setInterval(() => {
       this.check();
       this.regenerateTrack();
       this.view.render(this.track, this.trackBorder, this.displayedWord, this.coloredLetters, this.round);
     }, 100);
-
     setInterval(() => {
       this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord));
     }, 600);
+    setInterval(() => {
+      this.sound.kill();
+    }, 30000);
   }
 }
 
