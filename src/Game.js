@@ -122,7 +122,7 @@ class Game {
   }
 
   play() {
-    this.sound;
+
     getKeypress(this.hero, this.enemy);
     setInterval(() => {
       this.check();
