@@ -41,11 +41,9 @@ class Hero {
       enemy.die();
     });
     this.weapon.flyStatus = false;
-
-    this.skin = '😭';
-
-    sound.kill();
     this.player.play('./src/sounds/gameover.wav');
+    this.skin = '😭';
+    sound.kill();
 
     async function writeResults() {
       // await sequelize.query(
