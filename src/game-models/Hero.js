@@ -45,7 +45,7 @@ class Hero {
     this.skin = '😭';
 
     sound.kill();
-
+    this.player.play('./src/sounds/gameover.wav');
 
     async function writeResults() {
       // await sequelize.query(

@@ -15,6 +15,7 @@ class Enemy {
   }
 
   die() {
+    this.player.play('./src/sounds/mario.wav');
     this.position = -1;
   }
 }
