@@ -49,12 +49,12 @@ class Hero {
 
 
     async function writeResults() {
-      await sequelize.query(
-        `
-        INSERT INTO results (user_name, user_result)
-        VALUES ('${userName}', ${round});
-        `,
-      );
+      // await sequelize.query(
+      //   `
+      //   INSERT INTO results (user_name, user_result)
+      //   VALUES ('${userName}', ${round});
+      //   `,
+      // );
       setTimeout(() => {
         console.log('Ну, не вывез ты учебу... Давай назад на нулевую фазу!');
         console.log('\n***\n');

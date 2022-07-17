@@ -130,11 +130,8 @@ class Game {
       this.view.render(this.track, this.trackBorder, this.displayedWord, this.coloredLetters, this.round);
     }, 100);
     setInterval(() => {
-      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord));
+      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord, player));
     }, 600);
-    setInterval(() => {
-      this.sound.kill();
-    }, 30000);
   }
 }
 
