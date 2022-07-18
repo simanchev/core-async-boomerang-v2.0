@@ -3,6 +3,7 @@ const Enemy = require('./game-models/Enemy');
 const Brain = require('./game-models/Brain');
 const View = require('./View');
 const getKeypress = require('./keyboard');
+const player = require('play-sound')(opts = {});
 
 class Game {
   constructor(trackLength, userName) {
@@ -24,18 +25,21 @@ class Game {
     this.targetWord = this.words[this.round - 1];
     this.displayedWord = []
     this.colors = ['\x1b[31m', '\x1b[32m', '\x1b[34m', '\x1b[35m', '\x1b[36m'];
+
     this.targetWord.forEach((letter) => {
       const color = this.colors[Math.floor(Math.random() * this.colors.length)];
       this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
     });
     this.letterIndex = null;
     this.coloredLetters = [];
-    this.brain = new Brain(0, trackLength, this.trackRoad);
-    this.hero = new Hero(0, trackLength, this.trackRoad, this.brain);
-    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord)];
+    this.brain = new Brain(0, trackLength, this.trackRoad, player);
+    this.hero = new Hero(0, trackLength, this.trackRoad, this.brain, this.sound, player);
+    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord, player)];
     this.view = new View();
     this.track = [];
     this.trackBorder = [];
+    this.sound = player.play('./src/sounds/gamesound2.wav');
+    this.player = player;
     this.regenerateTrack();
   }
 
@@ -59,10 +63,11 @@ class Game {
   }
 
   check() {
+
     this.enemy.forEach((enemy) => {
       if (this.hero.position === enemy.position && 
         this.hero.trackRoad === enemy.trackRoad) {
-        this.hero.die(this.enemy, this.userName, this.round);
+        this.hero.die(this.enemy, this.userName, this.round, this.sound);
       }
 
       if ((this.brain.position === enemy.position || 
@@ -71,10 +76,11 @@ class Game {
         this.brain.flyStatus === true) {
         if (this.targetWord.includes(enemy.skin)) {
           this.letterIndex = this.targetWord.indexOf(enemy.skin);
-          const secondLetterIndex = this.targetWord.indexOf(enemy.skin, this.letterIndex + 1);
+          const secondLetterIndex = this.targetWord.lastIndexOf(enemy.skin);
 
           if (!this.coloredLetters.includes(this.letterIndex)) {
             this.coloredLetters.push(this.letterIndex);
+            this.player.play('./src/sounds/mario.wav');
 
             if (this.coloredLetters.length === this.targetWord.length) {
               this.round++;
@@ -82,6 +88,8 @@ class Game {
               this.coloredLetters = [];
               this.letterCounter = 0;
               this.targetWord = this.words[this.round - 1];
+
+              if (!this.targetWord) this.win();
 
               this.targetWord.forEach((letter) => {
                 const color = this.colors[Math.floor(Math.random() * this.colors.length)];
@@ -98,6 +106,8 @@ class Game {
               this.letterCounter = 0;
               this.targetWord = this.words[this.round - 1];
 
+              if (!this.targetWord) this.win();
+
               this.targetWord.forEach((letter) => {
                 const color = this.colors[Math.floor(Math.random() * this.colors.length)];
                 this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
@@ -106,10 +116,10 @@ class Game {
           }
 
           else {
-            this.hero.die(this.enemy, this.userName, this.round);
+            this.hero.die(this.enemy, this.userName, this.round, this.sound);
           }
         } else {
-          this.hero.die(this.enemy, this.userName, this.round);
+          this.hero.die(this.enemy, this.userName, this.round, this.sound);
         }
 
         enemy.die();
@@ -118,16 +128,25 @@ class Game {
     });
   }
 
+  win() {
+    console.clear();
+    console.log('Еее! Поздравляем, ты всех победил! 😎 🎉');
+    console.log('\n***\n');
+    console.log(`ELbrus Bootcamp.\nMade with 💗 and a little \x1b[34mc\x1b[31mo\x1b[33md\x1b[34mi\x1b[32mn\x1b[31mg\x1b[0m.`);
+    console.log('\n\n\n');
+    process.exit();
+  }
+
   play() {
+    this.sound;
     getKeypress(this.hero, this.enemy);
     setInterval(() => {
       this.check();
       this.regenerateTrack();
       this.view.render(this.track, this.trackBorder, this.displayedWord, this.coloredLetters, this.round);
     }, 100);
-
     setInterval(() => {
-      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord));
+      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord, player));
     }, 600);
   }
 }
