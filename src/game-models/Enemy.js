@@ -1,24 +1,21 @@
-// Враг.
-
 class Enemy {
-  constructor() {
-    this.generateSkin();
-    this.position = 2;
+  constructor(trackLength, trackRoad, word, player) {
+    this.generateSkin(word);
+    this.position = trackLength;
+    this.trackRoad = trackRoad;
+    this.player = player;
   }
 
-  generateSkin() {
-    const skins = ['👾', '💀', '👹', '👻', '👽', '👿', '💩', '🤡', '🤺', '🧛', '🧟', '🎃'];
-    this.skin = skins[Math.floor(Math.random() * skins.length)];
+  generateSkin(word) {
+    this.skin = word[Math.floor(Math.random() * word.length)];
   }
 
   moveLeft() {
-    // Идём влево.
     this.position -= 1;
   }
 
   die() {
-    this.position = '?';
-    console.log('Enemy is dead!');
+    this.position = -1;
   }
 }
 

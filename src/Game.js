@@ -1,45 +1,153 @@
-// Импортируем всё необходимое.
-// Или можно не импортировать,
-// а передавать все нужные объекты прямо из run.js при инициализации new Game().
-
 const Hero = require('./game-models/Hero');
 const Enemy = require('./game-models/Enemy');
-// const Boomerang = require('./game-models/Boomerang');
+const Brain = require('./game-models/Brain');
 const View = require('./View');
-
-// Основной класс игры.
-// Тут будут все настройки, проверки, запуск.
+const getKeypress = require('./keyboard');
+const player = require('play-sound')(opts = {});
 
 class Game {
-  constructor({ trackLength }) {
+  constructor(trackLength, userName) {
+    this.userName = userName;
     this.trackLength = trackLength;
-    this.hero = new Hero(); // Герою можно аргументом передать бумеранг.
-    this.enemy = new Enemy();
+    this.trackRoad = 1;
+    this.words = [
+      ['🅵', '🆂'],
+      ['🆂', '🆀', '🅻'],
+      ['🅹', '🅾', '🅸', '🅽'],
+      ['🅲', '🅻', '🅰', '🆂', '🆂'],
+      ['🆁', '🅴', '🅶', '🅴', '🆇', '🅿'],
+      ['🅿', '🆁', '🅾', '🅼', '🅸', '🆂', '🅴'],
+      ['🅲', '🅰', '🅻', '🅻', '🅱', '🅰', '🅲', '🅺'],
+      ['🆁', '🅴', '🅲', '🆄', '🆁', '🆂', '🅸', '🅾', '🅽'],
+      ['🅰', '🆂', '🆈', '🅽', '🅲', '🅷', '🆁', '🅾', '🅽', '🆈'],
+    ];
+    this.round = 1;
+    this.targetWord = this.words[this.round - 1];
+    this.displayedWord = []
+    this.colors = ['\x1b[31m', '\x1b[32m', '\x1b[34m', '\x1b[35m', '\x1b[36m'];
+
+    this.targetWord.forEach((letter) => {
+      const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+      this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
+    });
+    this.letterIndex = null;
+    this.coloredLetters = [];
+    this.brain = new Brain(0, trackLength, this.trackRoad, player);
+    this.hero = new Hero(0, trackLength, this.trackRoad, this.brain, this.sound, player);
+    this.enemy = [new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord, player)];
     this.view = new View();
     this.track = [];
+    this.trackBorder = [];
+    this.sound = player.play('./src/sounds/gamesound2.wav');
+    this.player = player;
     this.regenerateTrack();
   }
 
   regenerateTrack() {
-    // Сборка всего необходимого (герой, враг(и), оружие)
-    // в единую структуру данных
-    this.track = (new Array(this.trackLength)).fill(' ');
-    this.track[this.hero.position] = this.hero.skin;
+    for (let i = 0; i < 3; i++) {
+      this.track[i] = new Array(this.trackLength).fill(' ');
+    }
+
+    this.track[this.hero.trackRoad][this.hero.position] = this.hero.skin;
+    this.enemy.forEach((enemy) => {
+      this.track[enemy.trackRoad][enemy.position] = enemy.skin;
+      enemy.moveLeft();
+    });
+
+    if (this.brain.flyStatus) {
+      this.track[this.brain.trackRoad][this.brain.position] = this.brain.skin;
+      this.brain.move(this.hero.trackRoad, this.hero.position, this.enemy);
+    }
+
+    this.trackBorder = new Array(this.trackLength).fill('-');
   }
 
   check() {
-    if (this.hero.position === this.enemy.position) {
-      this.hero.die();
-    }
+
+    this.enemy.forEach((enemy) => {
+      if (this.hero.position === enemy.position && 
+        this.hero.trackRoad === enemy.trackRoad) {
+        this.hero.die(this.enemy, this.userName, this.round, this.sound);
+      }
+
+      if ((this.brain.position === enemy.position || 
+        this.brain.position - enemy.position === 1) && 
+        this.brain.trackRoad === enemy.trackRoad &&
+        this.brain.flyStatus === true) {
+        if (this.targetWord.includes(enemy.skin)) {
+          this.letterIndex = this.targetWord.indexOf(enemy.skin);
+          const secondLetterIndex = this.targetWord.lastIndexOf(enemy.skin);
+
+          if (!this.coloredLetters.includes(this.letterIndex)) {
+            this.coloredLetters.push(this.letterIndex);
+            this.player.play('./src/sounds/mario.wav');
+
+            if (this.coloredLetters.length === this.targetWord.length) {
+              this.round++;
+              this.displayedWord = [];
+              this.coloredLetters = [];
+              this.letterCounter = 0;
+              this.targetWord = this.words[this.round - 1];
+
+              if (!this.targetWord) this.win();
+
+              this.targetWord.forEach((letter) => {
+                const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
+              });
+            }
+          } else if (!this.coloredLetters.includes(secondLetterIndex)) {
+            this.coloredLetters.push(secondLetterIndex);
+
+            if (this.coloredLetters.length === this.targetWord.length) {
+              this.round++;
+              this.displayedWord = [];
+              this.coloredLetters = [];
+              this.letterCounter = 0;
+              this.targetWord = this.words[this.round - 1];
+
+              if (!this.targetWord) this.win();
+
+              this.targetWord.forEach((letter) => {
+                const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
+              });
+            }
+          }
+
+          else {
+            this.hero.die(this.enemy, this.userName, this.round, this.sound);
+          }
+        } else {
+          this.hero.die(this.enemy, this.userName, this.round, this.sound);
+        }
+
+        enemy.die();
+        this.brain.flyDirection = -1;
+      }
+    });
+  }
+
+  win() {
+    console.clear();
+    console.log('Еее! Поздравляем, ты всех победил! 😎 🎉');
+    console.log('\n***\n');
+    console.log(`ELbrus Bootcamp.\nMade with 💗 and a little \x1b[34mc\x1b[31mo\x1b[33md\x1b[34mi\x1b[32mn\x1b[31mg\x1b[0m.`);
+    console.log('\n\n\n');
+    process.exit();
   }
 
   play() {
+    this.sound;
+    getKeypress(this.hero, this.enemy);
     setInterval(() => {
-      // Let's play!
       this.check();
       this.regenerateTrack();
-      this.view.render(this.track);
-    });
+      this.view.render(this.track, this.trackBorder, this.displayedWord, this.coloredLetters, this.round);
+    }, 100);
+    setInterval(() => {
+      this.enemy.push(new Enemy(this.trackLength - 3, Math.floor(Math.random() * 3), this.targetWord, player));
+    }, 600);
   }
 }
 
