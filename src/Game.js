@@ -25,6 +25,7 @@ class Game {
     this.targetWord = this.words[this.round - 1];
     this.displayedWord = []
     this.colors = ['\x1b[31m', '\x1b[32m', '\x1b[34m', '\x1b[35m', '\x1b[36m'];
+
     this.targetWord.forEach((letter) => {
       const color = this.colors[Math.floor(Math.random() * this.colors.length)];
       this.displayedWord.push([letter, `${color}${letter}\x1b[0m`]);
@@ -62,6 +63,7 @@ class Game {
   }
 
   check() {
+
     this.enemy.forEach((enemy) => {
       if (this.hero.position === enemy.position && 
         this.hero.trackRoad === enemy.trackRoad) {
@@ -74,10 +76,11 @@ class Game {
         this.brain.flyStatus === true) {
         if (this.targetWord.includes(enemy.skin)) {
           this.letterIndex = this.targetWord.indexOf(enemy.skin);
-          const secondLetterIndex = this.targetWord.indexOf(enemy.skin, this.letterIndex + 1);
+          const secondLetterIndex = this.targetWord.lastIndexOf(enemy.skin);
 
           if (!this.coloredLetters.includes(this.letterIndex)) {
             this.coloredLetters.push(this.letterIndex);
+            this.player.play('./src/sounds/mario.wav');
 
             if (this.coloredLetters.length === this.targetWord.length) {
               this.round++;
@@ -85,6 +88,8 @@ class Game {
               this.coloredLetters = [];
               this.letterCounter = 0;
               this.targetWord = this.words[this.round - 1];
+
+              if (!this.targetWord) this.win();
 
               this.targetWord.forEach((letter) => {
                 const color = this.colors[Math.floor(Math.random() * this.colors.length)];
@@ -100,6 +105,8 @@ class Game {
               this.coloredLetters = [];
               this.letterCounter = 0;
               this.targetWord = this.words[this.round - 1];
+
+              if (!this.targetWord) this.win();
 
               this.targetWord.forEach((letter) => {
                 const color = this.colors[Math.floor(Math.random() * this.colors.length)];
@@ -119,6 +126,15 @@ class Game {
         this.brain.flyDirection = -1;
       }
     });
+  }
+
+  win() {
+    console.clear();
+    console.log('Еее! Поздравляем, ты всех победил! 😎 🎉');
+    console.log('\n***\n');
+    console.log(`ELbrus Bootcamp.\nMade with 💗 and a little \x1b[34mc\x1b[31mo\x1b[33md\x1b[34mi\x1b[32mn\x1b[31mg\x1b[0m.`);
+    console.log('\n\n\n');
+    process.exit();
   }
 
   play() {

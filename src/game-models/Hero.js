@@ -3,6 +3,7 @@ const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize('boomteam', 'boomteam', 'boom', {
   host: 'localhost',
   dialect: 'postgres',
+  logging: false,
 });
 
 class Hero {
@@ -46,12 +47,12 @@ class Hero {
     sound.kill();
 
     async function writeResults() {
-      // await sequelize.query(
-      //   `
-      //   INSERT INTO results (user_name, user_result)
-      //   VALUES ('${userName}', ${round});
-      //   `,
-      // );
+      await sequelize.query(
+        `
+        INSERT INTO results (user_name, user_result)
+        VALUES ('${userName}', ${round});
+        `,
+      );
       setTimeout(() => {
         console.log('Ну, не вывез ты учебу... Давай назад на нулевую фазу!');
         console.log('\n***\n');
